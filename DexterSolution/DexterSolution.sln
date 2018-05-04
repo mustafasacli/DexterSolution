@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.Core", "Dexter.Core\Dexter.Core.csproj", "{544F47CE-D6EA-4010-A0F0-10A2784CC9B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter", "Dexter\Dexter.csproj", "{A94FE2CB-7DCB-4048-974E-CE0E88E65406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.Data", "Dexter.Data\Dexter.Data.csproj", "{88E12EEF-3B34-4D41-9FC8-039F90814416}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.Extensions", "Dexter.Extensions\Dexter.Extensions.csproj", "{8363BC9A-FA2A-4C8D-BC76-6037227B35F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.AssemblyGui", "Dexter.AssemblyGui\Dexter.AssemblyGui.csproj", "{93A18D1C-B740-437A-A517-CAB586291C62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.SqlGui", "Dexter.SqlGui\Dexter.SqlGui.csproj", "{552B9BF2-98A4-4764-95B4-C191A6FEECB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{544F47CE-D6EA-4010-A0F0-10A2784CC9B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{544F47CE-D6EA-4010-A0F0-10A2784CC9B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{544F47CE-D6EA-4010-A0F0-10A2784CC9B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{544F47CE-D6EA-4010-A0F0-10A2784CC9B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A94FE2CB-7DCB-4048-974E-CE0E88E65406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A94FE2CB-7DCB-4048-974E-CE0E88E65406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A94FE2CB-7DCB-4048-974E-CE0E88E65406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A94FE2CB-7DCB-4048-974E-CE0E88E65406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E12EEF-3B34-4D41-9FC8-039F90814416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E12EEF-3B34-4D41-9FC8-039F90814416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E12EEF-3B34-4D41-9FC8-039F90814416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E12EEF-3B34-4D41-9FC8-039F90814416}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8363BC9A-FA2A-4C8D-BC76-6037227B35F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8363BC9A-FA2A-4C8D-BC76-6037227B35F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8363BC9A-FA2A-4C8D-BC76-6037227B35F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8363BC9A-FA2A-4C8D-BC76-6037227B35F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93A18D1C-B740-437A-A517-CAB586291C62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93A18D1C-B740-437A-A517-CAB586291C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93A18D1C-B740-437A-A517-CAB586291C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93A18D1C-B740-437A-A517-CAB586291C62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{552B9BF2-98A4-4764-95B4-C191A6FEECB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{552B9BF2-98A4-4764-95B4-C191A6FEECB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{552B9BF2-98A4-4764-95B4-C191A6FEECB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{552B9BF2-98A4-4764-95B4-C191A6FEECB4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {27233E7D-5953-4551-A254-0ACA485EAE01}
+	EndGlobalSection
+EndGlobal
