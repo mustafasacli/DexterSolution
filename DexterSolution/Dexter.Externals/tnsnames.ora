@@ -1,0 +1,8 @@
+NCARE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = OracleServer)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = NCARE)
+    )
+  )
