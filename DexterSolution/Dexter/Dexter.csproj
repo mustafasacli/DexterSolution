@@ -50,7 +50,7 @@
     <Compile Include="AppValues.cs" />
     <Compile Include="Configuraton\DxConfiguratonHelper.cs" />
     <Compile Include="Configuraton\DxExternalConfigurationSectionHandler.cs" />
-    <Compile Include="Factory\ConnectionFactory.cs" />
+    <Compile Include="Factory\DxConnectionFactory.cs" />
     <Compile Include="Factory\InternalFileLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

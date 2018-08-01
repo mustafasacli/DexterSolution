@@ -1,6 +1,7 @@
 ﻿namespace Dexter.Extensions
 {
     using System;
+
     public static class StringExtension
     {
         public static bool IsValid(this string s)

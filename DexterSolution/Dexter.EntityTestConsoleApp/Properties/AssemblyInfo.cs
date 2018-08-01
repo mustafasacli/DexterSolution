@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Dexter.Extensions")]
+[assembly: AssemblyTitle("Dexter.EntityTestConsoleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Dexter.Extensions")]
+[assembly: AssemblyProduct("Dexter.EntityTestConsoleApp")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8363bc9a-fa2a-4c8d-bc76-6037227b35f4")]
+[assembly: Guid("51df1b4e-2576-43a0-8356-75cd3a8c990a")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -6,7 +6,7 @@
     using System.Dynamic;
     using System.Linq;
 
-    public static class ConnectionExtension
+    public static class DxConnectionExtension
     {
         #region [ Execute method ]
 

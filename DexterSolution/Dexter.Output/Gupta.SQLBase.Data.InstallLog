@@ -1,0 +1,7 @@
+﻿Installing assembly 'C:\WINDOWS\assembly\GAC_MSIL\Gupta.SQLBase.Data\11.7.2.9610__ff2507ba9fe9b3ac\Gupta.SQLBase.Data.dll'.
+Affected parameters are:
+   mc = True
+   reg = True
+   assemblypath = C:\WINDOWS\assembly\GAC_MSIL\Gupta.SQLBase.Data\11.7.2.9610__ff2507ba9fe9b3ac\Gupta.SQLBase.Data.dll
+   logfile = C:\WINDOWS\assembly\GAC_MSIL\Gupta.SQLBase.Data\11.7.2.9610__ff2507ba9fe9b3ac\Gupta.SQLBase.Data.InstallLog
+   silent = False

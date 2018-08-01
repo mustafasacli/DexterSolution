@@ -1,4 +1,4 @@
-﻿using Dexter.Extensions;
+﻿using Dexter.ConnectionExtensions;
 using Dexter.Factory;
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace Dexter.SqlGui
             {
                 try
                 {
-                    using (IDbConnection connection = ConnectionFactory.Instance.GetConnection(this.cmbxConnTypes.GetItemText(cmbxConnTypes.SelectedItem)))
+                    using (IDbConnection connection = DxConnectionFactory.Instance.GetConnection(this.cmbxConnTypes.GetItemText(cmbxConnTypes.SelectedItem)))
                     {
                         connection.ConnectionString = this.txtConnStr.Text;
                         connection.Open();
@@ -116,7 +116,7 @@ namespace Dexter.SqlGui
             DataTable dataTable = new DataTable();
             try
             {
-                using (IDbConnection connection = ConnectionFactory.Instance.GetConnection(ConnType))
+                using (IDbConnection connection = DxConnectionFactory.Instance.GetConnection(ConnType))
                 {
                     connection.ConnectionString = connectionString;
                     dataTable = connection.GetResultSet(query, CommandType.Text).Tables[0];
@@ -155,14 +155,8 @@ namespace Dexter.SqlGui
             try
             {
                 this.cmbxConnTypes.Items.Clear();
-                this.cmbxConnTypes.Items.AddRange(ConnectionFactory.Instance.ConnectionKeys.ToArray());
+                this.cmbxConnTypes.Items.AddRange(DxConnectionFactory.Instance.ConnectionKeys.ToArray());
 
-                /*
-                foreach (object value in Enum.GetValues(typeof(ConnectionTypes)))
-                {
-                    this.cmbxConnTypes.Items.Add(value);
-                }
-                */
                 this.cmbxConnTypes.Refresh();
                 this.cmbxConnTypes.SelectedIndex = (this.cmbxConnTypes.Items.Count > 0 ? 1 : -1);
             }

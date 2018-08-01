@@ -1,10 +1,10 @@
-﻿namespace Dexter
+﻿namespace DexterCfg
 {
-    internal class AppValues
+    internal class AppCfgValues
     {
-        internal static readonly string LogFileNameFormat = "dexter-event-{0}.log";
+        internal static readonly string LogFileNameFormat = "event-{0}.log";
 
-        internal static readonly string ErrorLogFileNameFormat = "dexter-error-{0}.log";
+        internal static readonly string ErrorLogFileNameFormat = "error-{0}.log";
 
         internal static readonly string LogFileDateFormat = "yyyy-MM-dd-HH-mm-ss";
 
@@ -24,9 +24,11 @@
 
         internal static readonly string TypeNodeName = "typename";
 
-        internal static readonly string ConfigMainSectionName = "dexter.configs";
-
+        internal static readonly string ConfigMainNodeName = "dexter.configuration/dexter.configs";
+        
         internal static readonly string ConfigAddSectionName = "dexter/add";
+
+        internal static readonly string ConfigFile = "dexter.cfg.xml";
 
         internal static readonly string IsWriteEventLogAttribute = "writeEventLog";
 

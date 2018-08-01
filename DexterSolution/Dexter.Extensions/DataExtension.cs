@@ -445,7 +445,7 @@
             return tt;
         }
 
-        #endregion
+        #endregion [ RowToObject method ]
 
         public static List<dynamic> GetDbReaderResult(this DataTable table)
         {

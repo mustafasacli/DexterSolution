@@ -18,7 +18,7 @@
 
         public BaseDxDataAccess(string confName, string connectionString)
         {
-            IDbConnection conn = ConnectionFactory.Instance.GetConnection(confName);
+            IDbConnection conn = DxConnectionFactory.Instance.GetConnection(confName);
             //conn.ConnectionString = connectionString;
             mConn = new BaseDxConnection(conn);
             mConn.ConnectionString = connectionString;

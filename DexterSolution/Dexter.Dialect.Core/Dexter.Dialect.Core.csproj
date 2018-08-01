@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{871F06DB-0E91-4AE3-9E04-73A239042D17}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Dexter.TestConsoleApp</RootNamespace>
-    <AssemblyName>Dexter.TestConsoleApp</AssemblyName>
+    <ProjectGuid>{768BB40E-61E3-4359-BB45-87D1D8BDDA6C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dexter.Dialect.Core</RootNamespace>
+    <AssemblyName>Dexter.Dialect.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,12 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dexter.ConnectionExtensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fc25e37b1498a2aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dexter.Output\Dexter.ConnectionExtensions.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,28 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ISqlDialect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dexter.Extensions\Dexter.Extensions.csproj">
-      <Project>{8363bc9a-fa2a-4c8d-bc76-6037227b35f4}</Project>
-      <Name>Dexter.Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DexterCfg\DexterCfg.csproj">
-      <Project>{b2947b98-01a5-4709-812f-2d65b895ea38}</Project>
-      <Name>DexterCfg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Dexter\Dexter.csproj">
-      <Project>{a94fe2cb-7dcb-4048-974e-ce0e88e65406}</Project>
-      <Name>Dexter</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

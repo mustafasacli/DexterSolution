@@ -1,10 +1,9 @@
-﻿namespace Dexter.Configuraton
+﻿namespace DexterCfg.Configuraton
 {
     using System;
-    using System.Configuration;
     using System.Xml;
 
-    internal static class DxConfiguratonHelper
+    internal static class DxCfgConfiguratonHelper
     {
         private static object syncObj = new object();
         private static XmlNode mainNode = null;
@@ -21,7 +20,10 @@
                 {
                     if (mainNode == null)
                     {
-                        mainNode = ConfigurationManager.GetSection(AppValues.ConfigMainSectionName) as XmlNode;
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(AppCfgValues.ConfigFile);
+
+                        mainNode = doc.SelectSingleNode(AppCfgValues.ConfigMainNodeName);
                     }
                 }
             }
@@ -39,9 +41,7 @@
 
             try
             {
-                //XmlNode mainNode = ConfigurationManager.GetSection(AppValues.ConfigMainSectionName) as XmlNode; //"dexter.configs") as XmlNode;
-                //nodeList = mainNode.SelectNodes(AppValues.ConfigAddSectionName);
-                nodeList = GetMainNode()?.SelectNodes(AppValues.ConfigAddSectionName);
+                nodeList = GetMainNode().SelectNodes(AppCfgValues.ConfigAddSectionName);
             }
             catch (Exception e)
             {
@@ -61,12 +61,12 @@
             {
                 bool b = false;
 
-                XmlAttribute attr = GetMainNode()?.Attributes[AppValues.IsWriteEventLogAttribute];
+                XmlAttribute attr = GetMainNode().Attributes[AppCfgValues.IsWriteEventLogAttribute];
 
                 string s = attr?.Value;
                 s = s ?? string.Empty;
                 s = s.Trim();
-                b = s == AppValues.One;
+                b = s == AppCfgValues.One;
 
                 return b;
             }
@@ -82,12 +82,12 @@
             {
                 bool b = false;
 
-                XmlAttribute attr = GetMainNode()?.Attributes[AppValues.IsWriteErrorLogAttribute];
+                XmlAttribute attr = GetMainNode().Attributes[AppCfgValues.IsWriteErrorLogAttribute];
 
                 string s = attr?.Value;
                 s = s ?? string.Empty;
                 s = s.Trim();
-                b = s == AppValues.One;
+                b = s == AppCfgValues.One;
 
                 return b;
             }
