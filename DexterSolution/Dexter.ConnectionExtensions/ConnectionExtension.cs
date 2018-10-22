@@ -29,53 +29,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-
-                    //IDbDataParameter parameter;
-                    foreach (var key in inputs)
-                    {
-                        var parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        //parameter.DbType = DbType.Object;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            var parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            parameter.DbType = DbType.Int64;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     res = cmd.ExecuteNonQuery();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                if (!prm.DbType.ToString().Contains("Cursor"))
-                                    outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
                 }
             }
             catch (Exception e)
@@ -109,50 +67,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-                    IDbDataParameter parameter;
-
-                    foreach (var key in inputs)
-                    {
-                        parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     reader = cmd.ExecuteReader();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
                 }
             }
             catch (Exception e)
@@ -185,50 +104,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-
-                    IDbDataParameter parameter;
-                    foreach (var key in inputs)
-                    {
-                        parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     res = cmd.ExecuteScalar();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
                 }
             }
             catch (Exception e)
@@ -254,10 +134,22 @@
 
             try
             {
-                Type adapterTyp =
-                    mConn.GetType().Assembly.GetExportedTypes().Where(
-                        typ => typ.IsClass && typ.GetInterfaces().Contains(typeof(IDbDataAdapter))
-                               && typ.IsAbstract == false && typeof(IDbDataAdapter).IsAssignableFrom(typ)).First();
+                Type adapterTyp = null;
+                var adapterTypes =
+                     mConn.GetType().Assembly.GetExportedTypes().Where(
+                         typ => typ.IsClass && typ.GetInterfaces().Contains(typeof(IDbDataAdapter))
+                                && typ.IsAbstract == false && typeof(IDbDataAdapter).IsAssignableFrom(typ));
+
+                if (adapterTypes.Count() > 1)
+                {
+                    var connTypeName = mConn.GetType().Name;
+                    connTypeName = connTypeName.Substring(0, connTypeName.Length - 10).ToLower();
+                    adapterTyp = adapterTypes.Where(typ => typ.Name.ToLower().StartsWith(connTypeName)).First();
+                }
+                else
+                {
+                    adapterTyp = adapterTypes.First();
+                }
 
                 if (adapterTyp != null)
                 {
@@ -272,52 +164,13 @@
                         if (mTrans != null)
                             cmd.Transaction = mTrans;
 
-                        Dictionary<string, object> inputs =
-                            inputArgs ?? new Dictionary<string, object>();
-
-                        Dictionary<string, object> outputs =
-                            outputArgs ?? new Dictionary<string, object>();
-
-                        IDbDataParameter parameter;
-                        foreach (var key in inputs)
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Value = key.Value;
-
-                            parameter.Direction = outputs.ContainsKey(key.Key) ?
-                                ParameterDirection.InputOutput : ParameterDirection.Input;
-                            cmd.Parameters.Add(parameter);
-                        }
-
-                        foreach (var key in outputs)
-                        {
-                            if (!inputs.ContainsKey(key.Key))
-                            {
-                                parameter = cmd.CreateParameter();
-                                parameter.ParameterName = key.Key;
-                                parameter.Direction = ParameterDirection.Output;
-                                cmd.Parameters.Add(parameter);
-                            }
-                        }
+                        DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                         d.SelectCommand = cmd;
                         ds = new DataSet();
                         var result = d.Fill(ds);
 
-                        if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                        {
-                            IDbDataParameter prm;
-                            outputArgs = new Dictionary<string, object>();
-                            foreach (var item in cmd.Parameters)
-                            {
-                                prm = item as IDbDataParameter;
-                                if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                                {
-                                    outputArgs[prm.ParameterName] = prm.Value;
-                                }
-                            }
-                        }
+                        outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
                     }
                 }
             }
@@ -344,12 +197,6 @@
 
             try
             {
-                /*
-                reader = ExecuteReader(mConn: mConn,
-                    sql: sql, cmdType: cmdType, mTrans: mTrans,
-                    inputArgs: inputArgs, outputArgs: outputArgs);
-                */
-
                 using (IDbCommand cmd = mConn.CreateCommand())
                 {
                     cmd.CommandText = sql;
@@ -358,50 +205,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-                    IDbDataParameter parameter;
-
-                    foreach (var key in inputs)
-                    {
-                        parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     reader = cmd.ExecuteReader();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
 
                     list = reader.GetDynamicResultSet(closeAtFinal: true);
                 }
@@ -435,12 +243,6 @@
 
             try
             {
-                /*
-                reader = ExecuteReader(mConn: mConn,
-                    sql: sql, cmdType: cmdType, mTrans: mTrans,
-                    inputArgs: inputArgs, outputArgs: outputArgs);
-                */
-
                 using (IDbCommand cmd = mConn.CreateCommand())
                 {
                     cmd.CommandText = sql;
@@ -449,50 +251,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-                    IDbDataParameter parameter;
-
-                    foreach (var key in inputs)
-                    {
-                        parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     reader = cmd.ExecuteReader();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
 
                     list = reader.GetDynamicResultSetWithPaging(pageNumber: pageNumber, pageItemCount: pageItemCount, closeAtFinal: false);
                 }
@@ -525,12 +288,6 @@
 
             try
             {
-                /*
-                reader = ExecuteReader(mConn: mConn,
-                    sql: sql, cmdType: cmdType, mTrans: mTrans,
-                    inputArgs: inputArgs, outputArgs: outputArgs);
-                */
-
                 using (IDbCommand cmd = mConn.CreateCommand())
                 {
                     cmd.CommandText = sql;
@@ -539,50 +296,11 @@
                     if (mTrans != null)
                         cmd.Transaction = mTrans;
 
-                    Dictionary<string, object> inputs =
-                        inputArgs ?? new Dictionary<string, object>();
-
-                    Dictionary<string, object> outputs =
-                        outputArgs ?? new Dictionary<string, object>();
-                    IDbDataParameter parameter;
-
-                    foreach (var key in inputs)
-                    {
-                        parameter = cmd.CreateParameter();
-                        parameter.ParameterName = key.Key;
-                        parameter.Value = key.Value;
-
-                        parameter.Direction = outputs.ContainsKey(key.Key) ?
-                            ParameterDirection.InputOutput : ParameterDirection.Input;
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    foreach (var key in outputs)
-                    {
-                        if (!inputs.ContainsKey(key.Key))
-                        {
-                            parameter = cmd.CreateParameter();
-                            parameter.ParameterName = key.Key;
-                            parameter.Direction = ParameterDirection.Output;
-                            cmd.Parameters.Add(parameter);
-                        }
-                    }
+                    DbCommandHelper.SetCommandParameters(cmd, inputArgs, outputArgs);
 
                     reader = cmd.ExecuteReader();
 
-                    if (cmd.Parameters != null && cmd.Parameters.Count > 0)
-                    {
-                        IDbDataParameter prm;
-                        outputArgs = new Dictionary<string, object>();
-                        foreach (var item in cmd.Parameters)
-                        {
-                            prm = item as IDbDataParameter;
-                            if (prm.Direction.IsMember(ParameterDirection.Output, ParameterDirection.InputOutput))
-                            {
-                                outputArgs[prm.ParameterName] = prm.Value;
-                            }
-                        }
-                    }
+                    outputArgs = (Dictionary<string, object>)DbCommandHelper.GetOutParametersOfCommand(cmd);
 
                     list = reader.GetMultiDynamicResultSet();
                 }
@@ -601,5 +319,77 @@
         }
 
         #endregion [ GetMultiDynamicResultSet method ]
+    }
+
+    public class DbCommandHelper
+    {
+        /// <summary>
+        /// creates parameters and sets their values of IDbCommand.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="inputArgs"></param>
+        /// <param name="outputArgs"></param>
+        public static void SetCommandParameters(IDbCommand command,
+            Dictionary<string, object> inputArgs = null,
+            Dictionary<string, object> outputArgs = null)
+        {
+            Dictionary<string, object> inputs =
+                inputArgs ?? new Dictionary<string, object>();
+
+            Dictionary<string, object> outputs =
+                outputArgs ?? new Dictionary<string, object>();
+            IDbDataParameter parameter;
+
+            foreach (var key in inputs)
+            {
+                parameter = command.CreateParameter();
+                parameter.ParameterName = key.Key;
+                parameter.Value = key.Value;
+
+                parameter.Direction = outputs.ContainsKey(key.Key) ?
+                    ParameterDirection.InputOutput : ParameterDirection.Input;
+                command.Parameters.Add(parameter);
+            }
+
+            foreach (var key in outputs)
+            {
+                if (!inputs.ContainsKey(key.Key))
+                {
+                    parameter = command.CreateParameter();
+                    parameter.ParameterName = key.Key;
+                    parameter.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(parameter);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get Output Values of IDbCommand
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public static IDictionary<string, object> GetOutParametersOfCommand(IDbCommand command)
+        {
+            IDictionary<string, object> outputArgs = new Dictionary<string, object>();
+
+            if (command.Parameters != null && command.Parameters.Count > 0)
+            {
+                IDbDataParameter prm;
+                // outputArgs = new Dictionary<string, object>();
+                foreach (var item in command.Parameters)
+                {
+                    prm = item as IDbDataParameter;
+                    if (prm.Direction.IsMember(
+                        ParameterDirection.Output,
+                        ParameterDirection.InputOutput,
+                        ParameterDirection.ReturnValue))
+                    {
+                        outputArgs[prm.ParameterName] = prm.Value;
+                    }
+                }
+            }
+
+            return outputArgs;
+        }
     }
 }
