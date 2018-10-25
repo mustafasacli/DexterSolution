@@ -24,6 +24,10 @@
 
         internal static readonly string TypeNodeName = "typename";
 
+        internal static readonly string HasLoadReferencedAssembliesName = "hasLoadReferencedAssembliesName";
+
+        internal static readonly string LoadReferencedAssembliesValue = "1";
+
         internal static readonly string ConfigMainSectionName = "dexter.configs";
 
         internal static readonly string ConfigAddSectionName = "dexter/add";

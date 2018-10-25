@@ -96,6 +96,8 @@
                 return;
 
             string name;
+            bool hasLoadRefAssemblies = false;
+            string strLoadRefAssemblies = string.Empty;
             Assembly asm;
             Type typ;
 
@@ -106,13 +108,33 @@
                     name = nod.Attributes[AppValues.ConnectionNodeName].Value;// "name"].Value;
                     asm = Assembly.Load(nod.Attributes[AppValues.AssemblyNodeName].Value);// "namespace"].Value);
                     typ = asm.GetType(nod.Attributes[AppValues.TypeNodeName].Value);// "typename"].Value);
+                    strLoadRefAssemblies = nod.Attributes[AppValues.HasLoadReferencedAssembliesName]?.Value ?? string.Empty;
+                    strLoadRefAssemblies = strLoadRefAssemblies.Trim();
+                    hasLoadRefAssemblies = strLoadRefAssemblies == AppValues.LoadReferencedAssembliesValue;
+
                     if (typ.IsClass && typ.GetInterfaces().Contains(typeof(IDbConnection))
                                                         && typ.IsAbstract == false
                                                         && typeof(IDbConnection).IsAssignableFrom(typ))
                     {
                         connObjs[name] = typ;
+
                         if (DxConfiguratonHelper.IsWriteEventLog)
                             LogEvent($"Connection Name : {name}", $"Assembly : {asm.FullName}", $"Type Name : {typ.FullName}");
+
+                        try
+                        {
+                            if (hasLoadRefAssemblies)
+                            {
+                                var referencedAssemblies = typ.Assembly.GetReferencedAssemblies() ?? new AssemblyName[] { };
+                                referencedAssemblies.ToList().ForEach(a => Assembly.Load(a));
+                            }
+                        }
+                        catch (Exception ee)
+                        {
+                            //Exception handling
+                            if (DxConfiguratonHelper.IsWriteErrorLog)
+                                LogError(ee);
+                        }
                     }
                 }
                 catch (Exception ex)
