@@ -25,8 +25,12 @@
         internal static readonly string TypeNodeName = "typename";
 
         internal static readonly string ConfigMainNodeName = "dexter.configuration/dexter.configs";
-        
+
         internal static readonly string ConfigAddSectionName = "dexter/add";
+
+        internal static readonly string ConfigSettingNodesName = "dexter.configuration/dexter-settings";
+
+        internal static readonly string ConfigSettingSectionName = "setting";
 
         internal static readonly string ConfigFile = "dexter.cfg.xml";
 
@@ -35,5 +39,9 @@
         internal static readonly string IsWriteErrorLogAttribute = "writeErrorLog";
 
         internal static readonly string One = "1";
+
+        internal static readonly string Key = "key";
+        internal static readonly string Value = "value";
+        // "dexter.configuration/dexter-settings/setting"
     }
 }

@@ -17,6 +17,12 @@ namespace Dexter.TestConsoleApp
             string sConnStr = ConfigurationManager.AppSettings["connString"];
             sConnStr = sConnStr ?? "Server=127.0.0.1;database=mst_stock;Uid=root;Pwd=my123123;";
 
+            foreach (var item in DxCfgConnectionFactory.Instance.SettingKeys)
+            {
+                Console.WriteLine(string.Format("{0} : {1}", item, DxCfgConnectionFactory.Instance[item]));
+            }
+            //Console.WriteLine(DxCfgConnectionFactory.Instance[""]);
+
             IDbConnection conn = DxCfgConnectionFactory.Instance.GetConnection(sConnType);
             conn.ConnectionString = sConnStr;
 

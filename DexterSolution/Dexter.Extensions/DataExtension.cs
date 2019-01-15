@@ -447,7 +447,7 @@
 
         #endregion [ RowToObject method ]
 
-        public static List<dynamic> GetDbReaderResult(this DataTable table)
+        public static List<dynamic> ToDynamicList(this DataTable table)
         {
             List<dynamic> list = new List<dynamic>();
 

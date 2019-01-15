@@ -20,6 +20,7 @@
             () => new DxCfgConnectionFactory());
 
         private Dictionary<string, Type> connObjs = null;
+        private Dictionary<string, string> settings = null;
 
         private object lockErrObj = new object();
         private string errFileName;
@@ -33,14 +34,89 @@
         private DxCfgConnectionFactory()
         {
             connObjs = new Dictionary<string, Type>();
+            settings = new Dictionary<string, string>();
+
             this.Errors = new List<Exception> { };
             AddTypes();
+            AddSettings();
         }
 
         /// <summary>
         /// Gets DxCfgConnectionFactory instance for IDbConnection object list.
         /// </summary>
         public static DxCfgConnectionFactory Instance { get { return instance.Value; } }
+
+        /// <summary>
+        /// Get IDbConnection from configuration file for given conection name.
+        /// </summary>
+        /// <param name="connName">Connection name</param>
+        /// <returns>Returns IDbConnection instance for given name.</returns>
+        public IDbConnection GetConnection(string connName)
+        {
+            IDbConnection conn = null;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(connName))
+                    throw new ArgumentException(nameof(connName));
+
+                if (!connObjs.ContainsKey(connName))
+                    throw new Exception($"Connection with {connName} name should be defined.");
+
+                Type t;
+                t = connObjs[connName];
+
+                conn = Activator.CreateInstance(t) as IDbConnection;
+            }
+            catch (Exception e)
+            {
+                //Exceptin handling
+                if (DxCfgConfiguratonHelper.IsWriteErrorLog)
+                    LogError(e);
+
+                throw;
+            }
+
+            return conn;
+        }
+
+        /// <summary>
+        /// Connection Name List in configuration file.
+        /// </summary>
+        public IList<string> ConnectionKeys
+        {
+            get
+            {
+                return connObjs?.Keys?.ToList() ?? new List<string> { };
+            }
+        }
+
+        /// <summary>
+        /// Setting Key List in configuration file.
+        /// </summary>
+        public IList<string> SettingKeys
+        {
+            get
+            {
+                return settings?.Keys?.ToList() ?? new List<string> { };
+            }
+        }
+        
+        /// <summary>
+        /// Gets setting value with given key.
+        /// </summary>
+        /// <param name="key">setting key</param>
+        /// <returns>return string.</returns>
+        public string this[string key]
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                    throw new ArgumentNullException(nameof(key));
+
+                return settings?[key] ?? string.Empty;
+            }
+        }
 
         /// <summary>
         /// Error List.
@@ -128,48 +204,24 @@
             }
         }
 
-        /// <summary>
-        /// Get IDbConnection from configuration file for given conection name.
-        /// </summary>
-        /// <param name="connName">Connection name</param>
-        /// <returns>Returns IDbConnection instance for given name.</returns>
-        public IDbConnection GetConnection(string connName)
+        private void AddSettings()
         {
-            IDbConnection conn = null;
-
             try
             {
-                if (string.IsNullOrWhiteSpace(connName))
-                    throw new ArgumentException(nameof(connName));
+                var settingNodes = DxCfgConfiguratonHelper.GetSettingNode().SelectNodes(AppCfgValues.ConfigSettingSectionName);
+                foreach (XmlNode item in settingNodes)
+                {
+                    var key = item.Attributes[AppCfgValues.Key]?.Value ?? string.Empty;
+                    if (string.IsNullOrWhiteSpace(key))
+                        continue;
 
-                if (!connObjs.ContainsKey(connName))
-                    throw new Exception($"Connection with {connName} name should be defined.");
-
-                Type t;
-                t = connObjs[connName];
-
-                conn = Activator.CreateInstance(t) as IDbConnection;
+                    settings[key] = item.InnerText;
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                //Exceptin handling
                 if (DxCfgConfiguratonHelper.IsWriteErrorLog)
-                    LogError(e);
-
-                throw;
-            }
-
-            return conn;
-        }
-
-        /// <summary>
-        /// Connection Name List in configuration file.
-        /// </summary>
-        public IList<string> ConnectionKeys
-        {
-            get
-            {
-                return connObjs?.Keys?.ToList() ?? new List<string> { };
+                    LogError(ex);
             }
         }
 
@@ -219,7 +271,6 @@
 
                     CfgFileOperator.Instance.Write(fileName, rows);
                 }
-
             }
             catch (Exception ee)
             {
@@ -279,14 +330,13 @@
 
                     CfgFileOperator.Instance.Write(fileName, rows);
                 }
-
             }
             catch (Exception e)
             {
             }
         }
 
-        private static string AssemblyDirectory
+        private string AssemblyDirectory
         {
             get
             {

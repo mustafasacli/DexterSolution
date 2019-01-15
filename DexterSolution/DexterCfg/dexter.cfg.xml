@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <dexter.configuration>
+  <dexter-settings writeEventLog="0" writeErrorLog="1">
+    <setting key="conn-key">main</setting>
+    <setting key="conn-string-key">connStringSqlCache</setting>
+    <setting key="connTypeName">oracle</setting>
+    <setting key="connStringName">connStringOraMngd</setting>
+
+    <setting key="connStringSqlCache">Data Source=.\SQLEXPRESS;Initial Catalog=SimpleCacheServerTestDb;Integrated Security=SSPI;</setting>
+    <setting key="connStringSql">data source=.\SQLEXPRESS;initial catalog=FileStoreDbTest;integrated security=True;</setting>
+    <setting key="connStringMySql">data source=127.0.0.1;initial catalog=FileStoreDbTest;user id=root;password=my123123;</setting>
+    <setting key="connStringPgSql">server=127.0.0.1;Database=postgres;user id=postgres;password=pg123123;</setting>
+    <setting key="connStringOraMngd">
+      Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=XE)));User Id=HR;Password=ora123;
+    </setting>   
+  </dexter-settings>
   <dexter.configs writeEventLog="0" writeErrorLog="1">
     <dexter>
       <add name="mysql"
