@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.ConnectionExtensions
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DexterCfg", "DexterCfg\DexterCfg.csproj", "{B2947B98-01A5-4709-812F-2D65B895EA38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.Auto", "Dexter.Auto\Dexter.Auto.csproj", "{E0122B16-E7AB-4389-A422-466B39536B3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{B2947B98-01A5-4709-812F-2D65B895EA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2947B98-01A5-4709-812F-2D65B895EA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2947B98-01A5-4709-812F-2D65B895EA38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0122B16-E7AB-4389-A422-466B39536B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0122B16-E7AB-4389-A422-466B39536B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0122B16-E7AB-4389-A422-466B39536B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0122B16-E7AB-4389-A422-466B39536B3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

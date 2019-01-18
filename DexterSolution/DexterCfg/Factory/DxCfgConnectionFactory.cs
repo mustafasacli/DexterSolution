@@ -20,12 +20,12 @@
             () => new DxCfgConnectionFactory());
 
         private Dictionary<string, Type> connObjs = null;
-        private Dictionary<string, string> settings = null;
+        private readonly Dictionary<string, string> settings = null;
 
-        private object lockErrObj = new object();
+        private readonly object lockErrObj = new object();
         private string errFileName;
 
-        private object lockEvtObj = new object();
+        private readonly object lockEvtObj = new object();
         private string evtFileName;
 
         /// <summary>
@@ -44,7 +44,8 @@
         /// <summary>
         /// Gets DxCfgConnectionFactory instance for IDbConnection object list.
         /// </summary>
-        public static DxCfgConnectionFactory Instance { get { return instance.Value; } }
+        public static DxCfgConnectionFactory Instance
+        { get { return instance.Value; } }
 
         /// <summary>
         /// Get IDbConnection from configuration file for given conection name.
@@ -61,7 +62,7 @@
                     throw new ArgumentException(nameof(connName));
 
                 if (!connObjs.ContainsKey(connName))
-                    throw new Exception($"Connection with {connName} name should be defined.");
+                    throw new Exception($"Connection with \"{connName}\" name should be defined.");
 
                 Type t;
                 t = connObjs[connName];
@@ -121,7 +122,8 @@
         /// <summary>
         /// Error List.
         /// </summary>
-        public List<Exception> Errors { get; private set; }
+        public List<Exception> Errors
+        { get; private set; }
 
         private string ErrorFileName
         {

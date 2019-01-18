@@ -57,6 +57,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Dexter.Auto\Dexter.Auto.csproj">
+      <Project>{e0122b16-e7ab-4389-a422-466b39536b3e}</Project>
+      <Name>Dexter.Auto</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dexter.Extensions\Dexter.Extensions.csproj">
       <Project>{8363bc9a-fa2a-4c8d-bc76-6037227b35f4}</Project>
       <Name>Dexter.Extensions</Name>

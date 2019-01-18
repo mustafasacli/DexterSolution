@@ -1,10 +1,12 @@
-﻿using Dexter.ConnectionExtensions;
+﻿using Dexter.Auto;
+using Dexter.ConnectionExtensions;
 using Dexter.Factory;
 using DexterCfg.Factory;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Dexter.TestConsoleApp
 {
@@ -46,6 +48,10 @@ namespace Dexter.TestConsoleApp
                 Console.WriteLine("---------------------------");
             }
             Console.WriteLine("**************************");
+            /// Dx Auto Sample
+            DxAutoConnectionFactory.Instance.Register("sql", new SqlConnection());
+            var connection = DxAutoConnectionFactory.Instance.GetConnection("sql");
+
             Console.ReadKey();
         }
     }

@@ -1,6 +1,5 @@
-﻿namespace Dexter.Factory
+﻿namespace Dexter.Auto
 {
-    using Dexter.Configuraton;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -8,16 +7,16 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Xml;
 
     /// <summary>
     /// Dexter Connection Factory class. Generates IDbConnection object with given connection name.
     /// </summary>
-    public sealed class DxConnectionFactory
+    public sealed class DxAutoConnectionFactory
     {
-        private static Lazy<DxConnectionFactory> instance = new Lazy<DxConnectionFactory>(() => new DxConnectionFactory());
+        private static Lazy<DxAutoConnectionFactory> instance = new Lazy<DxAutoConnectionFactory>(() => new DxAutoConnectionFactory());
 
         private Dictionary<string, Type> connObjs = null;
+        private Dictionary<string, string> connStrPairs = null;
 
         private readonly object lockErrObj = new object();
         private string errFileName;
@@ -28,17 +27,16 @@
         /// <summary>
         /// private DxConnectionFactory Ctor.
         /// </summary>
-        private DxConnectionFactory()
+        private DxAutoConnectionFactory()
         {
+            connStrPairs = new Dictionary<string, string>();
             connObjs = new Dictionary<string, Type>();
-            this.Errors = new List<Exception> { };
-            AddTypes();
         }
 
         /// <summary>
         /// Gets DxConnectionFactory instance for IDbConnection object list.
         /// </summary>
-        public static DxConnectionFactory Instance
+        public static DxAutoConnectionFactory Instance
         { get { return instance.Value; } }
 
         /// <summary>
@@ -57,8 +55,8 @@
                     {
                         if (string.IsNullOrWhiteSpace(errFileName))
                         {
-                            errFileName = DateTime.Now.ToString(AppValues.ErrorFileDateFormat);
-                            errFileName = string.Format(AppValues.ErrorLogFileNameFormat, errFileName);
+                            errFileName = DateTime.Now.ToString(AutoAppValues.ErrorFileDateFormat);
+                            errFileName = string.Format(AutoAppValues.ErrorLogFileNameFormat, errFileName);
                         }
                     }
                 }
@@ -77,8 +75,8 @@
                     {
                         if (string.IsNullOrWhiteSpace(evtFileName))
                         {
-                            evtFileName = DateTime.Now.ToString(AppValues.LogFileDateFormat);
-                            evtFileName = string.Format(AppValues.LogFileNameFormat, evtFileName);
+                            evtFileName = DateTime.Now.ToString(AutoAppValues.LogFileDateFormat);
+                            evtFileName = string.Format(AutoAppValues.LogFileNameFormat, evtFileName);
                         }
                     }
                 }
@@ -87,70 +85,32 @@
             }
         }
 
-        private void AddTypes()
+        public bool IsWriteErrorLog
+        { get; set; }
+
+        public bool IsWriteEventLog
+        { get; set; }
+
+        /// <summary>
+        /// Registers IDbConnection with given conn name key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connName"></param>
+        /// <param name="t"></param>
+        public void Register<T>(string connName, T t) where T : class, IDbConnection
         {
-            XmlNodeList nodeList = DxConfiguratonHelper.GetConnectionNodeList();
+            if (string.IsNullOrWhiteSpace(connName))
+                throw new ArgumentException(nameof(connName));
 
-            if (nodeList == null)
-                return;
+            if (connObjs.ContainsKey(connName))
+                throw new Exception($"Connection with \"{connName}\" name is already defined.");
 
-            if (nodeList.Count < 1)
-                return;
-
-            string name;
-            bool hasLoadRefAssemblies = false;
-            string strLoadRefAssemblies = string.Empty;
-            Assembly asm;
-            Type typ;
-
-            foreach (XmlNode nod in nodeList)
-            {
-                try
-                {
-                    name = nod.Attributes[AppValues.ConnectionNodeName].Value;// "name"].Value;
-                    asm = Assembly.Load(nod.Attributes[AppValues.AssemblyNodeName].Value);// "namespace"].Value);
-                    typ = asm.GetType(nod.Attributes[AppValues.TypeNodeName].Value);// "typename"].Value);
-                    strLoadRefAssemblies = nod.Attributes[AppValues.HasLoadReferencedAssembliesName]?.Value ?? string.Empty;
-                    strLoadRefAssemblies = strLoadRefAssemblies.Trim();
-                    hasLoadRefAssemblies = strLoadRefAssemblies == AppValues.LoadReferencedAssembliesValue;
-
-                    if (typ.IsClass && typ.GetInterfaces().Contains(typeof(IDbConnection))
-                                                        && typ.IsAbstract == false
-                                                        && typeof(IDbConnection).IsAssignableFrom(typ))
-                    {
-                        connObjs[name] = typ;
-
-                        if (DxConfiguratonHelper.IsWriteEventLog)
-                            LogEvent($"Connection Name : {name}", $"Assembly : {asm.FullName}", $"Type Name : {typ.FullName}");
-
-                        try
-                        {
-                            if (hasLoadRefAssemblies)
-                            {
-                                var referencedAssemblies = typ.Assembly.GetReferencedAssemblies() ?? new AssemblyName[] { };
-                                referencedAssemblies.ToList().ForEach(a => Assembly.Load(a));
-                            }
-                        }
-                        catch (Exception ee)
-                        {
-                            //Exception handling
-                            if (DxConfiguratonHelper.IsWriteErrorLog)
-                                LogError(ee);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //Exception handling
-                    if (DxConfiguratonHelper.IsWriteErrorLog)
-                        LogError(ex);
-                    //throw;
-                }
-            }
+            connObjs[connName] = typeof(T);
+            connStrPairs[connName] = t.ConnectionString;
         }
 
         /// <summary>
-        /// Get IDbConnection from configuration file for given conection name.
+        /// Get IDbConnection from configuration file for given connection name.
         /// </summary>
         /// <param name="connName">Connection name</param>
         /// <returns>Returns IDbConnection instance for given name.</returns>
@@ -170,11 +130,12 @@
                 t = connObjs[connName];
 
                 conn = Activator.CreateInstance(t) as IDbConnection;
+                conn.ConnectionString = connStrPairs[connName];
             }
             catch (Exception e)
             {
                 //Exceptin handling
-                if (DxConfiguratonHelper.IsWriteErrorLog)
+                if (this.IsWriteErrorLog)
                     LogError(e);
                 throw;
             }
@@ -197,7 +158,7 @@
         {
             try
             {
-                if (DxConfiguratonHelper.IsWriteErrorLog)
+                if (this.IsWriteErrorLog)
                 {
                     DateTime dt = DateTime.Now;
                     StackFrame frm = new StackFrame(1, true);
@@ -210,9 +171,9 @@
                     string assFileName = frm.GetFileName();
                     string methodName = mthd.Name;
 
-                    //string fileName = DateTime.Now.ToString(AppValues.ErrorFileDateFormat);
-                    //fileName = string.Format(AppValues.ErrorLogFileNameFormat, fileName);
-                    string folderName = $"{AssemblyDirectory}/{AppValues.ErrorFolderName}";
+                    //string fileName = DateTime.Now.ToString(AutoAppValues.ErrorFileDateFormat);
+                    //fileName = string.Format(AutoAppValues.ErrorLogFileNameFormat, fileName);
+                    string folderName = $"{AssemblyDirectory}/{AutoAppValues.ErrorFolderName}";
 
                     try
                     {
@@ -228,7 +189,7 @@
 
                     List<string> rows = new List<string>
                     {
-                        $"Time : {dt.ToString(AppValues.GeneralDateFormat)}",
+                        $"Time : {dt.ToString(AutoAppValues.GeneralDateFormat)}",
                         $"Assembly : {assName}",
                         $"Class : {className}",
                         $"Method Name : {methodName}",
@@ -236,7 +197,7 @@
                         $"Column : {col}",
                         $"Message : {e.Message}",
                         $"Stack Trace : {e.StackTrace}",
-                        AppValues.Lines
+                        AutoAppValues.Lines
                     };
 
                     FileOperator.Instance.Write(fileName, rows);
@@ -251,7 +212,7 @@
         {
             try
             {
-                if (DxConfiguratonHelper.IsWriteEventLog)
+                if (this.IsWriteEventLog)
                 {
                     DateTime dt = DateTime.Now;
                     StackFrame frm = new StackFrame(1, true);
@@ -264,9 +225,9 @@
                     string assFileName = frm.GetFileName();
                     string methodName = mthd.Name;
 
-                    //string fileName = DateTime.Now.ToString(AppValues.LogFileDateFormat);
-                    //fileName = string.Format(AppValues.LogFileNameFormat, fileName);
-                    string folderName = $"{AssemblyDirectory}/{AppValues.EventFolderName}";
+                    //string fileName = DateTime.Now.ToString(AutoAppValues.LogFileDateFormat);
+                    //fileName = string.Format(AutoAppValues.LogFileNameFormat, fileName);
+                    string folderName = $"{AssemblyDirectory}/{AutoAppValues.EventFolderName}";
 
                     try
                     {
@@ -282,7 +243,7 @@
 
                     List<string> rows = new List<string>
                     {
-                        $"Time : {dt.ToString(AppValues.GeneralDateFormat)}",
+                        $"Time : {dt.ToString(AutoAppValues.GeneralDateFormat)}",
                         $"Assembly : {assName}",
                         $"Class : {className}",
                         $"Method Name : {methodName}",
@@ -298,7 +259,7 @@
                                 rows.Add(item);
                         }
 
-                    rows.Add(AppValues.Lines);
+                    rows.Add(AutoAppValues.Lines);
 
                     FileOperator.Instance.Write(fileName, rows);
                 }
