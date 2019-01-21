@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataReaderAsyncExtensions.cs" />
+    <Compile Include="DxConnectionAsyncExtension.cs" />
     <Compile Include="DxConnectionExtension.cs" />
     <Compile Include="DataExtension.cs" />
     <Compile Include="DataReaderExtensions.cs" />

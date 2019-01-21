@@ -1,4 +1,5 @@
-﻿using Dexter.ConnectionExtensions;
+﻿//using Dexter.ConnectionExtensions;
+using Dexter.Extensions;
 using Dexter.Factory;
 using System;
 using System.Collections.Generic;
@@ -95,13 +96,14 @@ namespace Dexter.SqlGui
                 }
                 else if (this.txtQuery.Text.Length > 0)
                 {
-                    table = this.GetTable(this.cmbxConnTypes.GetItemText(cmbxConnTypes.SelectedItem), this.txtConnStr.Text, this.txtQuery.Text);
+                    table = this.GetTableAsync(this.cmbxConnTypes.GetItemText(cmbxConnTypes.SelectedItem), this.txtConnStr.Text, this.txtQuery.Text);
+                    //table = this.GetTable(this.cmbxConnTypes.GetItemText(cmbxConnTypes.SelectedItem), this.txtConnStr.Text, this.txtQuery.Text);
                 }
             }
             catch (Exception exception1)
             {
-                Exception exception = exception1;
-                MessageBox.Show(string.Format("Message : {0}\nStack Trace : {1}", exception.Message, exception.StackTrace));
+                //Exception exception = exception1;
+                MessageBox.Show(string.Format("Message : {0}\nStack Trace : {1}", exception1.Message, exception1.StackTrace));
             }
             if (this.chkRemoveBlobs.Checked)
             {
@@ -120,6 +122,24 @@ namespace Dexter.SqlGui
                 {
                     connection.ConnectionString = connectionString;
                     dataTable = connection.GetResultSet(query, CommandType.Text).Tables[0];
+                }
+            }
+            catch (Exception exception)
+            {
+                throw;
+            }
+            return dataTable;
+        }
+
+        public DataTable GetTableAsync(string ConnType, string connectionString, string query)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (IDbConnection connection = DxConnectionFactory.Instance.GetConnection(ConnType))
+                {
+                    connection.ConnectionString = connectionString;
+                    dataTable = connection.GetResultSetAsync(query, CommandType.Text).Result.Tables[0];
                 }
             }
             catch (Exception exception)
