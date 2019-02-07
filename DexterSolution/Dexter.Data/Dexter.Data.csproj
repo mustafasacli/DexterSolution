@@ -57,7 +57,8 @@
   <PropertyGroup>
     <PostBuildEvent>rd /s /q "$(ProjectDir)\\obj\\Debug"
 rd /s /q "$(ProjectDir)\\obj\\Release"
-rd /s /q "$(ProjectDir)\\bin\\Release"</PostBuildEvent>
+rd /s /q "$(ProjectDir)\\bin\\Release"
+rd /s /q "$(ProjectDir)\\bin\\Debug"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,0 @@
-E:\Projects\Git_Projects\DexterSolution\DexterSolution\DexterCfg.Standard\bin\Debug\netstandard2.0\dexter.cfg.xml
-E:\Projects\Git_Projects\DexterSolution\DexterSolution\DexterCfg.Standard\bin\Debug\netstandard2.0\DexterCfg.Standard.deps.json
-E:\Projects\Git_Projects\DexterSolution\DexterSolution\DexterCfg.Standard\bin\Debug\netstandard2.0\DexterCfg.Standard.dll
-E:\Projects\Git_Projects\DexterSolution\DexterSolution\DexterCfg.Standard\bin\Debug\netstandard2.0\DexterCfg.Standard.pdb

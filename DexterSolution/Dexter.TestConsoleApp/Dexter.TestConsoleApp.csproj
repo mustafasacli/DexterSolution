@@ -78,6 +78,7 @@
   <PropertyGroup>
     <PostBuildEvent>rd /s /q "$(ProjectDir)\\obj\\Debug"
 rd /s /q "$(ProjectDir)\\obj\\Release"
-rd /s /q "$(ProjectDir)\\bin\\Release"</PostBuildEvent>
+rd /s /q "$(ProjectDir)\\bin\\Release"
+rd /s /q "$(ProjectDir)\\bin\\Debug"</PostBuildEvent>
   </PropertyGroup>
 </Project>
