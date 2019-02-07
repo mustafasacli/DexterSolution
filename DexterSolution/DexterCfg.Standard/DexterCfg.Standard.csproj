@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\Dexter.Output\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="dexter.cfg.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="dexter.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rd /s /q &quot;$(ProjectDir)\\obj\\Debug&quot;&#xD;&#xA;rd /s /q &quot;$(ProjectDir)\\obj\\Release&quot;&#xD;&#xA;rd /s /q &quot;$(ProjectDir)\\bin\\Release&quot;&#xD;&#xA;rd /s /q &quot;$(ProjectDir)\\bin\\Debug&quot;" />
+  </Target>
+
+</Project>

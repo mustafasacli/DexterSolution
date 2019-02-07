@@ -25,6 +25,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DexterCfg", "DexterCfg\Dext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexter.Auto", "Dexter.Auto\Dexter.Auto.csproj", "{E0122B16-E7AB-4389-A422-466B39536B3E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DexterCfg.Standard", "DexterCfg.Standard\DexterCfg.Standard.csproj", "{8188B133-C987-406A-9636-16628C46FB0A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{BFAD3ED7-4453-4F2E-B337-806B9DB28300}"
+	ProjectSection(SolutionItems) = preProject
+		DexterCfg\dexter.cfg.xml = DexterCfg\dexter.cfg.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +82,10 @@ Global
 		{E0122B16-E7AB-4389-A422-466B39536B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0122B16-E7AB-4389-A422-466B39536B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0122B16-E7AB-4389-A422-466B39536B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8188B133-C987-406A-9636-16628C46FB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8188B133-C987-406A-9636-16628C46FB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8188B133-C987-406A-9636-16628C46FB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8188B133-C987-406A-9636-16628C46FB0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
