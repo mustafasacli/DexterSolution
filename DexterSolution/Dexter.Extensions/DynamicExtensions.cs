@@ -72,21 +72,21 @@
             pInfos = pInfos.AsQueryable().Where(q => columns.Keys.Contains(q.Name) == true).ToArray();
 
             IDictionary<string, object> dict;
-            T tt;
+            T instance;
             string col;
 
             foreach (var dyn in dynList)
             {
                 dict = dyn;
-                tt = Activator.CreateInstance<T>();
+                instance = Activator.CreateInstance<T>();
 
                 foreach (var prp in pInfos)
                 {
                     col = null;
                     col = columns[prp.Name];
-                    prp.SetValue(tt, dict[col]);
+                    prp.SetValue(instance, dict[col]);
                 }
-                list.Add(tt);
+                list.Add(instance);
             }
             return list;
         }

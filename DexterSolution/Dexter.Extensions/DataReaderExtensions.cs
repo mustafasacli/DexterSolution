@@ -7,6 +7,79 @@
 
     public static class DataReaderExtensions
     {
+        #region [ FirstRow method ]
+
+        public static dynamic FirstRow(this IDataReader dataReader)
+        {
+            if (dataReader == null)
+                throw new ArgumentNullException(nameof(dataReader));
+
+            dynamic d = new ExpandoObject();
+
+            if (dataReader.IsClosed)
+            {
+                return d;
+            }
+
+            try
+            {
+                while (dataReader.Read())
+                {
+                    d = GetDynamicFromDataReader(dataReader);
+                    break;
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            finally
+            {
+                if (dataReader != null && !dataReader.IsClosed)
+                    dataReader.Close();
+            }
+
+            return d;
+        }
+
+        #endregion [ First method ]
+
+        #region [ LastRow method ]
+
+        public static dynamic LastRow(this IDataReader dataReader)
+        {
+            if (dataReader == null)
+                throw new ArgumentNullException(nameof(dataReader));
+
+            dynamic d = new ExpandoObject();
+
+            if (dataReader.IsClosed)
+            {
+                return d;
+            }
+
+            try
+            {
+                while (dataReader.Read())
+                {
+                    d = GetDynamicFromDataReader(dataReader);
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            finally
+            {
+                if (dataReader != null && !dataReader.IsClosed)
+                    dataReader.Close();
+            }
+
+            return d;
+        }
+
+        #endregion [ Last method ]
+
         #region [ GetDynamicResultSet method ]
 
         /// <summary>
@@ -30,36 +103,9 @@
 
             try
             {
-                IDictionary<string, object> expando;
-                object obj;
-                string col;
-                int colCounter = 1;
-                int fieldCount = reader.FieldCount;
-
                 while (reader.Read())
                 {
-                    expando = new ExpandoObject();
-
-                    for (int counter = 0; counter < fieldCount; counter++)
-                    {
-                        col = reader.GetName(counter);
-                        obj = reader.GetValue(counter);
-                        obj = obj == DBNull.Value ? null : obj;
-
-                        if (expando.ContainsKey(col))
-                        {
-                            colCounter = 1;
-                            while (expando.ContainsKey(col))
-                            {
-                                col = $"{col}_{colCounter}";
-                                colCounter++;
-                            }
-                        }
-
-                        expando[col] = obj;
-                    }
-
-                    dynamic d = expando;
+                    dynamic d = GetDynamicFromDataReader(reader);
                     list.Add(d);
                 }
             }
@@ -95,16 +141,9 @@
 
             try
             {
-                IDictionary<string, object> expando;
-
                 uint cntr = 1;
                 uint max = pageNumber * pageItemCount;
                 uint min = (pageNumber - 1) * pageItemCount;
-
-                object obj;
-                string col;
-                int colCounter = 1;
-                int fieldCount = reader.FieldCount;
 
                 while (reader.Read())
                 {
@@ -115,28 +154,8 @@
                         break;
 
                     cntr++;
-                    expando = new ExpandoObject();
 
-                    for (int counter = 0; counter < fieldCount; counter++)
-                    {
-                        col = reader.GetName(counter);
-                        obj = reader.GetValue(counter);
-                        obj = obj == DBNull.Value ? null : obj;
-
-                        if (expando.ContainsKey(col))
-                        {
-                            colCounter = 1;
-                            while (expando.ContainsKey(col))
-                            {
-                                col = $"{col}_{colCounter}";
-                                colCounter++;
-                            }
-                        }
-
-                        expando[col] = obj;
-                    }
-
-                    dynamic d = expando;
+                    dynamic d = GetDynamicFromDataReader(reader);
                     list.Add(d);
                 }
             }
@@ -153,12 +172,12 @@
             return list;
         }
 
-        #endregion [ GetMultiDynamicResultSet method ]
+        #endregion [ GetDynamicResultSetWithPaging method ]
 
         #region [ GetMultipleDynamicResultSet method ]
 
         public static List<List<dynamic>> GetMultiDynamicResultSet(
-            this IDataReader reader)
+            this IDataReader reader, bool closeAtFinal = false)
         {
             List<List<dynamic>> objDynList = new List<List<dynamic>>();
 
@@ -177,10 +196,50 @@
             {
                 throw;
             }
+            finally
+            {
+                if (reader != null && closeAtFinal)
+                    reader.Close();
+            }
 
             return objDynList;
         }
 
-        #endregion
+        #endregion [ GetMultipleDynamicResultSet method ]
+
+        #region [ GetDynamicFromDataReader method ]
+
+        internal static dynamic GetDynamicFromDataReader(IDataReader dataReader)
+        {
+            IDictionary<string, object> expando = new ExpandoObject();
+            var fieldCount = dataReader.FieldCount;
+            var columnName = string.Empty;
+            object value;
+            var colCounter = 1;
+
+            for (int counter = 0; counter < fieldCount; counter++)
+            {
+                columnName = dataReader.GetName(counter);
+                value = dataReader.GetValue(counter);
+                value = value == DBNull.Value ? null : value;
+
+                if (expando.ContainsKey(columnName))
+                {
+                    colCounter = 1;
+                    while (expando.ContainsKey(columnName))
+                    {
+                        columnName = $"{columnName}_{colCounter}";
+                        colCounter++;
+                    }
+                }
+
+                expando[columnName] = value;
+            }
+
+            dynamic d = expando;
+            return d;
+        }
+
+        #endregion [ GetDynamicFromDataReader method ]
     }
 }

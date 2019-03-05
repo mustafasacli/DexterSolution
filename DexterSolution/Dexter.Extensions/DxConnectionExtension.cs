@@ -319,6 +319,163 @@
         }
 
         #endregion [ GetMultiDynamicResultSet method ]
+
+        #region [ ExecuteScalarAs method ]
+
+        public static T ExecuteScalarAs<T>(this IDbConnection connection,
+           string sqlText, CommandType commandType = CommandType.Text,
+           IDbTransaction transaction = null,
+           Dictionary<string, object> inputParameters = null,
+           Dictionary<string, object> outputParameters = null) where T : struct
+        {
+            var value = ExecuteScalar(
+                connection, sqlText, commandType, transaction, inputParameters, outputParameters);
+            return !value.IsNullOrDbNull() ? (T)value : default(T);
+        }
+
+        #endregion [ ExecuteScalarAs method ]
+
+        #region [ ExecuteAsLong method ]
+
+        public static long ExecuteAsLong(this IDbConnection connection,
+           string sqlText, CommandType commandType = CommandType.Text,
+           IDbTransaction transaction = null,
+           Dictionary<string, object> inputParameters = null,
+           Dictionary<string, object> outputParameters = null)
+        {
+            var value = Execute(
+                connection, sqlText, commandType, transaction, inputParameters, outputParameters);
+            return (long)value;
+        }
+
+        #endregion [ ExecuteAsLong method ]
+
+        #region [ ExecuteAsDecimal method ]
+
+        public static decimal ExecuteAsDecimal(this IDbConnection connection,
+           string sqlText, CommandType commandType = CommandType.Text,
+           IDbTransaction transaction = null,
+           Dictionary<string, object> inputParameters = null,
+           Dictionary<string, object> outputParameters = null)
+        {
+            var value = Execute(
+                connection, sqlText, commandType, transaction, inputParameters, outputParameters);
+            return (decimal)value;
+        }
+
+        #endregion [ ExecuteAsDecimal method ]
+
+        #region [ FirstAsDynamic method ]
+
+        public static dynamic FirstAsDynamic(this IDbConnection connection,
+            string sqlText, CommandType commandType = CommandType.Text,
+            IDbTransaction transaction = null,
+            Dictionary<string, object> inputParameters = null,
+            Dictionary<string, object> outputParameters = null)
+        {
+            dynamic d;
+
+            try
+            {
+                var reader = ExecuteReader(
+                    connection, sqlText, commandType,
+                    transaction, inputParameters, outputParameters);
+
+                d = reader.FirstRow();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return d;
+        }
+
+        #endregion [ FirstAsDynamic method ]
+
+        #region [ First method ]
+
+        public static T First<T>(this IDbConnection connection,
+            string sqlText, CommandType commandType = CommandType.Text,
+            IDbTransaction transaction = null,
+            Dictionary<string, object> inputParameters = null,
+            Dictionary<string, object> outputParameters = null) where T : class
+        {
+            T instance = null;
+
+            try
+            {
+                dynamic d = FirstAsDynamic(
+                    connection, sqlText, commandType,
+                    transaction, inputParameters, outputParameters);
+                ExpandoObject eo = (d as ExpandoObject);
+                instance = DynamicExtensions.ConvertTo<T>(eo);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return instance;
+        }
+
+        #endregion [ First method ]
+
+        #region [ LastAsDynamic method ]
+
+        public static dynamic LastAsDynamic(this IDbConnection connection,
+            string sqlText, CommandType commandType = CommandType.Text,
+            IDbTransaction transaction = null,
+            Dictionary<string, object> inputParameters = null,
+            Dictionary<string, object> outputParameters = null)
+        {
+            dynamic d;
+
+            try
+            {
+                var reader = ExecuteReader(
+                    connection, sqlText, commandType,
+                    transaction, inputParameters, outputParameters);
+
+                d = reader.LastRow();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return d;
+        }
+
+        #endregion [ LastAsDynamic method ]
+
+        #region [ Last method ]
+
+        public static T Last<T>(this IDbConnection connection,
+            string sqlText, CommandType commandType = CommandType.Text,
+            IDbTransaction transaction = null,
+            Dictionary<string, object> inputParameters = null,
+            Dictionary<string, object> outputParameters = null) where T : class
+        {
+            T instance = null;
+
+            try
+            {
+                dynamic d = LastAsDynamic(
+                    connection, sqlText, commandType,
+                    transaction, inputParameters, outputParameters);
+                ExpandoObject eo = (d as ExpandoObject);
+                instance = DynamicExtensions.ConvertTo<T>(eo);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return instance;
+        }
+
+        #endregion [ Last method ]
     }
 
     public class DxDbCommandHelper
